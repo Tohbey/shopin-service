@@ -87,11 +87,6 @@ userSchema.methods.generateAuthToken = function () {
   return token;
 }
 
-userSchema.methods.isValidPassword = async function (inputPassword) {
-  let validPassword = await bcrypt.compare(inputPassword, this.password)
-  return validPassword
-}
-
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

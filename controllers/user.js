@@ -3,11 +3,14 @@ const { JsonResponse } = require("../lib/apiResponse");
 const { paginate } = require("../utils/index");
 const { validateUser } = require("../request/user");
 const UserService = require("../services/user");
-const User = require("../models/user");
 const bcrypt = require('bcrypt');
 
-
-exports.createUser =  async(req, res) => {
+/** 
+ * Create User
+ * @param {*} req
+ * @param {*} res
+*/
+exports.createUser =  async(req, res, next) => {
     try{
         req.body.role = "User";
         console.log(req.body)
@@ -20,14 +23,18 @@ exports.createUser =  async(req, res) => {
 
         let createUser = await UserService.create(req.body)
         
-        JsonResponse(res,201,MSG_TYPES.CREATED,createUser)
+        JsonResponse(res, 201, MSG_TYPES.CREATED, createUser)
     }catch(error){
-        JsonResponse(res,400,MSG_TYPES.SERVER_ERROR,error)
+        next(error)
     }
 }
 
-
-exports.getAllUser =  async(req, res) => {
+/** 
+ * get all Users
+ * @param {*} req
+ * @param {*} res
+*/
+exports.getAllUser =  async(req, res, next) => {
     try{
         const { page, pageSize, skip } = paginate(req);
 
@@ -40,46 +47,89 @@ exports.getAllUser =  async(req, res) => {
 
         JsonResponse(res, 200, MSG_TYPES.FETCHED,users, meta)
     }catch(error){
-        JsonResponse(res,400,MSG_TYPES.SERVER_ERROR,error)
+        next(error)
     }
 }
 
-
-exports.getUser =  async(req, res) => {
+/** 
+ * get current user
+ * @param {*} req
+ * @param {*} res
+*/
+exports.getMe =  async(req, res, next) => {
     try{
-        const userId = req.user.id;
+        const userId = req.user._id;
 
         const user = await UserService.getUser(userId)
 
-        JsonResponse(res,200,MSG_TYPES.FETCHED,user)
+        JsonResponse(res, 200, MSG_TYPES.FETCHED, user)
     }catch(error){
-        JsonResponse(res,400,MSG_TYPES.SERVER_ERROR,error)
+        next(error)
     }
 }
 
-exports.updateUser =  async(req, res) => {
+/** 
+ * get user
+ * @param {*} req
+ * @param {*} res
+*/
+exports.getUser =  async(req, res, next) => {
     try{
-        const userId = req.user.userId
-    
-        const { error } = validateUser(req.body)
-        if(error) return JsonResponse(res, 400, error.details[0].message)
+        const userId = req.params.id;
+
+        const user = await UserService.getUser(userId)
+
+        JsonResponse(res, 200, MSG_TYPES.FETCHED, user)
+    }catch(error){
+        next(error)
+    }
+}
+
+/** 
+ * get update user
+ * @param {*} req
+ * @param {*} res
+*/
+exports.updateUser =  async(req, res, next) => {
+    try{
+        const userId = req.user._id
     
         await UserService.update(userId, req.body);
     
         return JsonResponse(res, 200, MSG_TYPES.UPDATED);
     }catch(error){
-        JsonResponse(res,400,MSG_TYPES.SERVER_ERROR,error)
+        next(error)
     }
 }
 
-exports.suspendUser =  async(req, res) => {
+/** 
+ * get suspend user
+ * @param {*} req
+ * @param {*} res
+*/
+exports.suspendUser =  async(req, res, next) => {
     try{
-        const userId = req.user.userId
+        const userId = req.userId
 
         await UserService.suspendUser(userId);
 
-        return JsonResponse(res,200,MSG_TYPES.DELETED);
+        return JsonResponse(res, 200, MSG_TYPES.SUSPENDED);
     }catch(error){
-        JsonResponse(res,400,MSG_TYPES.SERVER_ERROR,error)
+        next(error)
+    }
+}
+
+/** 
+ * get teminate current user
+ * @param {*} req
+ * @param {*} res
+*/
+exports.teminateMe = async(req, res, next) => {
+    try {
+        const user = await UserService.terminateMe(req.user)
+
+        return JsonResponse(res, 200, MSG_TYPES.DELETED)
+    } catch (error) {
+        next(error)    
     }
 }

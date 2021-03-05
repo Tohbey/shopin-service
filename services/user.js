@@ -1,11 +1,10 @@
 const User = require("../models/user")
 const { MSG_TYPES } = require('../constant/types');
-const { GenerateOTP, GenerateToken} = require("../utils/index")
+const { GenerateOTP, GenerateToken, mailSender} = require("../utils/index")
 const moment = require("moment");
-
+const bcrypt = require("bcrypt")
 
 class UserService{
-
 
     static create(body){
         return new Promise(async (resolve, reject) => {
@@ -28,9 +27,11 @@ class UserService{
                 await newUser.save();
 
                 //email notification
+                // const subject = "User Verification Code";
+                // const text = "Plsease use the OTP code: "+otp+" to verify your account";
+                // await mailSender(newUser.email,subject,text)
 
                 resolve({newUser, otp})
-                resolve(createUser)
             }catch(error){
                 reject({statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})
             }
@@ -91,15 +92,33 @@ class UserService{
     static suspendUser(userId){
         return new Promise(async (resolve, reject) => {
             try{
-                const user = await User.findById(userId)
+                const user = await User.findByIdAndUpdate(userId,{status:"suspended"})
                 if(!user){
                     return reject({statusCode:400,msg:MSG_TYPES.NOT_FOUND})
                 }
-
-                await user.delete()
                 resolve(user)
             }catch(error){
-                reject({statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})
+                reject({ statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})
+            }
+        })
+    }
+
+    static terminateMe(user){
+        return new Promise(async (resolve, reject) => {
+            try {
+                const currentUser = await User.findOne({
+                    _id: user._id,
+                    status: "active"
+                })
+                if(!currentUser){
+                    return reject({statusCode:400,msg:MSG_TYPES.NOT_FOUND})
+                }
+
+                await currentUser.delete()
+
+                resolve({msg: MSG_TYPES.DELETED})
+            } catch (error) {
+                return reject({ statusCode: 500, msg:MSG_TYPES.SERVER_ERROR, error});
             }
         })
     }

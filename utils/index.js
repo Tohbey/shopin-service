@@ -1,4 +1,9 @@
 const RandExp = require("randexp");
+const nodeMailer = require("nodemailer")
+const dotenv = require('dotenv').config();
+
+const email  = process.env.email
+const password = process.env.password
 
 GenerateToken = (num) => {
   var text = "";
@@ -17,6 +22,24 @@ GenerateOTP = (num) => {
   return OTPCode;
 };
 
+const mailSender = async(to, subject, text) => {
+  let transporter = nodeMailer.createTransport({
+    service:'gmail',
+    auth:{
+        user:email,
+        pass:password
+    }
+  })
+
+  let mailOption = {
+    from:"Shopin-api Services",
+    to,
+    subject,
+    text
+  }
+
+  await transporter.sendMail(mailOption)
+}
 
 const paginate = (req) => {
   const page =
@@ -34,5 +57,6 @@ const paginate = (req) => {
 module.exports = {
   paginate,
   GenerateOTP,
-  GenerateToken
+  GenerateToken,
+  mailSender
 };

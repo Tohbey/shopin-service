@@ -49,9 +49,19 @@ function validateVerifyUser(user){
     return schema.validate(user)
 }
 
+function validatePasswordChange(body){
+    const schema = Joi.object({
+        oldPassword: Joi.string().required(),
+        newPassword: passwordComplexity(complexityOption).required(),
+    })
+
+    return schema.validate(body)
+}
+
 module.exports = {
     validateUser,
     validateResendOTP,
     validateLogin,
-    validateVerifyUser
+    validateVerifyUser,
+    validatePasswordChange
 }

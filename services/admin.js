@@ -1,5 +1,8 @@
 const User = require('../models/user')
 const { MSG_TYPES } = require('../constant/types');
+const { GenerateOTP, GenerateToken, mailSender} = require("../utils/index")
+const moment = require("moment");
+const bcrypt = require("bcrypt")
 
 class AdminService{
 
@@ -11,10 +14,24 @@ class AdminService{
                     name:body.name,
                     role:"Admin"
                 })
-                if(!admin) return reject({statusCode:400, msg:MSG_TYPES.ACCOUNT_EXIST})
+                if(!admin) {
+                    return reject({statusCode:400, msg:MSG_TYPES.ACCOUNT_EXIST})
+                }
 
-                const createAdmin = await User.create(body)
-                resolve(createAdmin)
+                const otp = GenerateOTP(4);
+                
+                const newAdmin = new User(body);
+                newAdmin.email.toLowerCase();
+                newAdmin.rememberToken.token = otp;
+                newAdmin.rememberToken.expiredDate = moment().add(20, "minutes");
+                await newAdmin.save();
+
+                //email notification
+                const subject = "User Verification Code";
+                const text = "Plsease use the OTP code: "+otp+" to verify your account";
+                await mailSender(newAdmin.email,subject,text)
+
+                resolve({newAdmin, otp})
             } catch (error) {
                 reject({statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})
             }
@@ -40,14 +57,14 @@ class AdminService{
     static suspendAdmin(adminId){
         return new Promise(async (resolve, reject) => {
             try {
-                const admin = await User.find({
+                const admin = await User.findOneAndUpdate({
                     role:"Admin",
                     _id:adminId,
                     stutus:"active"
-                })
+                }, {status:"suspended"})
 
                 if(!admin) return reject({statusCode:400, msg:MSG_TYPES.NOT_FOUND})
-                resolve(admin)
+                resolve()
             } catch (error) {
                 reject({statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})
             }
@@ -59,7 +76,8 @@ class AdminService{
             try {
                 const admin = await User.findOne({
                     _id: userId,
-                    stutus:"active"
+                    stutus:"active",
+                    role:"Admin"
                 })
 
                 if(!admin) return reject({statusCode:400, msg:MSG_TYPES.NOT_FOUND})
