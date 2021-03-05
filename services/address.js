@@ -27,8 +27,7 @@ class AddressService{
         return new Promise(async (resolve, reject) => {
             try{
                 const address = await Address.find({user:user})
-                .skip(skip).
-                limit(pageSize)
+                .skip(skip).limit(pageSize)
 
                 const total = await Address.find().countDocuments()
 

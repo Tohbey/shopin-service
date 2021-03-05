@@ -1,5 +1,8 @@
 const User = require("../models/user")
 const { MSG_TYPES } = require('../constant/types');
+const { GenerateOTP, GenerateToken} = require("../utils/index")
+const moment = require("moment");
+
 
 class UserService{
 
@@ -9,13 +12,24 @@ class UserService{
             try{
                 const user = User.findOne({
                     email:body.email,
-                    name:body.name
+                    name:body.name,
+                    role:"User"
                 })
-                if(user){
+                if(!user){
                     reject({statusCode:400, msg:MSG_TYPES.ACCOUNT_EXIST})
                 }
                 
-                const createUser = await User.create(body)
+                const otp = GenerateOTP(4);
+                
+                const newUser = new User(body);
+                newUser.email.toLowerCase();
+                newUser.rememberToken.token = otp;
+                newUser.rememberToken.expiredDate = moment().add(20, "minutes");
+                await newUser.save();
+
+                //email notification
+
+                resolve({newUser, otp})
                 resolve(createUser)
             }catch(error){
                 reject({statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})
@@ -26,7 +40,8 @@ class UserService{
     static getAllUser(skip,pageSize){
         return new Promise(async (resolve, reject) => {
             try{
-                const users = await User.find()
+                const users = await User.find({role: "User"})
+                .skip(skip).limit(pageSize)
 
                 const total = await User.find().countDocuments()
 
@@ -73,7 +88,7 @@ class UserService{
         })
     }
 
-    static delete(userId){
+    static suspendUser(userId){
         return new Promise(async (resolve, reject) => {
             try{
                 const user = await User.findById(userId)

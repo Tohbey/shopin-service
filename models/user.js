@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
-const objectId = mongoose.Types.ObjectId
+const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 
 require('dotenv').config();
 const jwtSecret = process.env.JWT_SECRET
+const expiry = process.env.expireIn
 
 const userSchema = new mongoose.Schema(
   {
@@ -12,17 +13,36 @@ const userSchema = new mongoose.Schema(
       index: true,
       required: true,
       minlength: 5,
-      maxlength: 100,
+      maxlength: 50,
+      lowercase: true,
+    },
+    emailVerified: {
+      type: Boolean,
+      default: false,
+      required: false,
+      index: true,
     },
     name: {
       type:String,
+      maxlength: 30,
       required:true
     },
-    phoneNumber: String,
+    phoneNumber: {
+      type: String,
+      maxlength: 225,
+      index: true,
+      required: true,
+    },
+    phoneNumberVerified: {
+      type: Boolean,
+      default: false,
+      required: false,
+      index: true,
+    },
     status: {
       type: String,
-      enum: ["active", "suspended","pending"],
-      default: "pending",
+      enum: ["active", "suspended","inactive"],
+      default: "inactive",
       required:true
     },
     password:{
@@ -30,10 +50,25 @@ const userSchema = new mongoose.Schema(
       required:true,
       maxlength:600,
     },
-    newUser:{
-      type:Boolean,
+    role:{
+      type: String,
+      enum:["User","Admin"],
+      default:"User",
       required:true
-    }
+    },
+    img: {
+      type: String,
+    },
+    rememberToken: {
+      token: {
+        type: String,
+        default: null,
+      },
+      expiredDate: {
+        type: Date,
+        default: null,
+      },
+    },
   },
   {
     timestamps: true,
@@ -42,10 +77,19 @@ const userSchema = new mongoose.Schema(
 
 userSchema.methods.generateAuthToken = function () {
   const token = jwt.sign({
-    _id:this._id,email:this.email
-  }, jwtSecret)
+    _id:this._id,
+    email:this.email,
+    role:this.role
+  }, 
+  jwtSecret,
+  {expiresIn: expiry})
 
   return token;
+}
+
+userSchema.methods.isValidPassword = async function (inputPassword) {
+  let validPassword = await bcrypt.compare(inputPassword, this.password)
+  return validPassword
 }
 
 const User = mongoose.model("User", userSchema);

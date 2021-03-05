@@ -9,14 +9,14 @@ const bcrypt = require('bcrypt');
 
 exports.createUser =  async(req, res) => {
     try{
-        req.body.status = "pending";
-        req.body.newUser = "true";
-        
-        const salt = await bcrypt.genSalt(10)
-        req.body.password = await bcrypt.hash(req.body.password,salt)
+        req.body.role = "User";
+        console.log(req.body)
 
         const { error } = validateUser(req.body)
         if(error) return JsonResponse(res, 400, error.details[0].message)
+        
+        const salt = await bcrypt.genSalt(10)
+        req.body.password = await bcrypt.hash(req.body.password,salt)
 
         let createUser = await UserService.create(req.body)
         
@@ -72,11 +72,11 @@ exports.updateUser =  async(req, res) => {
     }
 }
 
-exports.deleteUser =  async(req, res) => {
+exports.suspendUser =  async(req, res) => {
     try{
         const userId = req.user.userId
 
-        await UserService.delete(userId);
+        await UserService.suspendUser(userId);
 
         return JsonResponse(res,200,MSG_TYPES.DELETED);
     }catch(error){

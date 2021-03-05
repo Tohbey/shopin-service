@@ -10,6 +10,6 @@ router.post("/",controller.user.createUser)
 
 router.patch("/",auth,controller.user.updateUser)
 
-router.delete("/",auth,controller.user.deleteUser)
+router.delete("/",auth,controller.user.suspendUser)
 
 module.exports = router
