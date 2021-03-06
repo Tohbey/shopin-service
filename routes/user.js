@@ -1,18 +1,18 @@
 //all routers working perfectly 
 const router = require("express").Router();
 const controller = require("../controllers");
-const auth = require('../middlewares/auth')
+const {Auth, hasRole} = require('../middlewares/auth')
 
-router.get("/",auth,controller.user.getAllUser)
+router.get("/",Auth,controller.user.getAllUser)
 
-router.get("/me",auth,controller.user.getMe)
+router.get("/me",Auth,controller.user.getMe)
 
-router.get("/:id",auth,controller.user.getUser)
+router.get("/:id",Auth,controller.user.getUser)
 
 router.post("/",controller.user.createUser)
 
-router.patch("/",auth,controller.user.updateUser)
+router.patch("/",Auth,controller.user.updateUser)
 
-router.delete("/me",auth,controller.user.teminateMe)
+router.delete("/me",Auth,controller.user.teminateMe)
 
 module.exports = router

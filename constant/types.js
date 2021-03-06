@@ -16,9 +16,12 @@ const MSG_TYPES = Object.freeze({
     SERVER_ERROR: "Server Error!",
     INVALID_PASSWORD: "Invalid Password",
     RATING_DONE: "Rating submitted successfully.",
+    PERMISSION: "You don't have enough permission to perform this action",
     RATING_EXIST: "Rating exists.",
     RATING_RETRIEVED: "Rating retrieved successfully.",
-    NOT_ALLOWED: "Operation not allowed"
+    NOT_ALLOWED: "Operation not allowed",
+    ACCESS_DENIED: "Access denied.",
+    SESSION_EXPIRED: "Access denied. Your session has expired",
 });
   
   

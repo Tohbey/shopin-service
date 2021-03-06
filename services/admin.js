@@ -12,7 +12,7 @@ class AdminService{
                 const admin = User.findOne({
                     email:body.email,
                     name:body.name,
-                    role:"Admin"
+                    role: body.role
                 })
                 if(!admin) {
                     return reject({statusCode:400, msg:MSG_TYPES.ACCOUNT_EXIST})
@@ -27,9 +27,9 @@ class AdminService{
                 await newAdmin.save();
 
                 //email notification
-                const subject = "User Verification Code";
-                const text = "Plsease use the OTP code: "+otp+" to verify your account";
-                await mailSender(newAdmin.email,subject,text)
+                // const subject = "User Verification Code";
+                // const text = "Plsease use the OTP code: "+otp+" to verify your account";
+                // await mailSender(newAdmin.email,subject,text)
 
                 resolve({newAdmin, otp})
             } catch (error) {
@@ -54,17 +54,27 @@ class AdminService{
         })
     }
 
-    static suspendAdmin(adminId){
+    static suspendAdmin(adminId, superAdminId){
         return new Promise(async (resolve, reject) => {
             try {
+                const superAdmin = await User.findOne({
+                    role:"SuperAdmin",
+                    _id: superAdminId,
+                    status:"active"
+                })
+                if(!superAdmin){
+                    return reject({statusCode:400, msg:MSG_TYPES.NOT_ALLOWED})
+                }
+
                 const admin = await User.findOneAndUpdate({
                     role:"Admin",
                     _id:adminId,
-                    stutus:"active"
+                    status:"active"
                 }, {status:"suspended"})
 
                 if(!admin) return reject({statusCode:400, msg:MSG_TYPES.NOT_FOUND})
-                resolve()
+                
+                resolve({admin})
             } catch (error) {
                 reject({statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})
             }
@@ -76,7 +86,7 @@ class AdminService{
             try {
                 const admin = await User.findOne({
                     _id: userId,
-                    stutus:"active",
+                    status:"active",
                     role:"Admin"
                 })
 
@@ -97,14 +107,34 @@ class AdminService{
                     return reject({statusCode:400,msg:MSG_TYPES.NOT_FOUND})
                 }
 
-                await user.updateOne(
+                await admin.updateOne(
                     {
                         $set:adminObject
                     }
                 )
-                resolve(user)
+                resolve(admin)
             } catch (error) {
                 reject({statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})
+            }
+        })
+    }
+
+    static terminateMe(user){
+        return new Promise(async (resolve, reject) => {
+            try {
+                const currentAdmin = await User.findOne({
+                    _id: user._id,
+                    status: "active"
+                })
+                if(!currentAdmin){
+                    return reject({statusCode:400,msg:MSG_TYPES.NOT_FOUND})
+                }
+
+                await currentAdmin.delete()
+
+                resolve({msg: MSG_TYPES.DELETED})
+            } catch (error) {
+                return reject({ statusCode: 500, msg:MSG_TYPES.SERVER_ERROR, error});
             }
         })
     }

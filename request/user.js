@@ -17,7 +17,7 @@ function validateUser(body) {
         password: passwordComplexity(complexityOption).required(),
         name: Joi.string().required(),
         phoneNumber: Joi.string().required(),
-        role: Joi.string().valid("User", "Admin").required()
+        role: Joi.string().valid("User", "Admin","SuperAdmin").required()
     });
 
     return userSchema.validate(body)

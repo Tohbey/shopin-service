@@ -1,15 +1,15 @@
 const router = require("express").Router();
 const controller = require("../controllers");
-const auth = require('../middlewares/auth')
+const {Auth} = require('../middlewares/auth')
 
-router.get("/:address",auth,controller.address.getAddress)
+router.get("/:address",Auth,controller.address.getAddress)
 
-router.get("/byUser",auth,controller.address.getAllAddress)
+router.get("/byUser",Auth,controller.address.getAllAddress)
 
-router.post("/",auth,controller.address.createAddress)
+router.post("/",Auth,controller.address.createAddress)
 
-router.put("/:addressId",auth,controller.address.updateAddress)
+router.put("/:addressId",Auth,controller.address.updateAddress)
 
-router.delete("/:addressId",auth,controller.address.deleteAddress)
+router.delete("/:addressId",Auth,controller.address.deleteAddress)
 
 module.exports = router

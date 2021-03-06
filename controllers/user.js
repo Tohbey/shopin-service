@@ -13,7 +13,6 @@ const bcrypt = require('bcrypt');
 exports.createUser =  async(req, res, next) => {
     try{
         req.body.role = "User";
-        console.log(req.body)
 
         const { error } = validateUser(req.body)
         if(error) return JsonResponse(res, 400, error.details[0].message)
@@ -103,17 +102,18 @@ exports.updateUser =  async(req, res, next) => {
 }
 
 /** 
- * get suspend user
+ * suspend user
  * @param {*} req
  * @param {*} res
 */
 exports.suspendUser =  async(req, res, next) => {
     try{
+        const adminId = req.user._id
         const userId = req.userId
 
-        await UserService.suspendUser(userId);
+        const user = await UserService.suspendUser(userId, adminId);
 
-        return JsonResponse(res, 200, MSG_TYPES.SUSPENDED);
+        return JsonResponse(res, 200, MSG_TYPES.SUSPENDED, user);
     }catch(error){
         next(error)
     }

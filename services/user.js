@@ -62,6 +62,7 @@ class UserService{
                 if(!user){
                     return reject({code:400,msg:MSG_TYPES.NOT_FOUND})
                 }
+
                 resolve(user)
             }catch(error){
                 reject({statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})
@@ -82,6 +83,7 @@ class UserService{
                         $set:userObject
                     }
                 )
+
                 resolve(user)
             }catch(error){
                 reject({statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})
@@ -89,13 +91,23 @@ class UserService{
         })
     }
 
-    static suspendUser(userId){
+    static suspendUser(userId, adminId){
         return new Promise(async (resolve, reject) => {
             try{
+                const admin = await User.findOne({
+                    _id: adminId,
+                    status:"active",
+                    role:"Admin"
+                })
+                if(!admin){
+                    return reject({statusCode:400, msg: MSG_TYPES.NOT_ALLOWED})
+                }
+
                 const user = await User.findByIdAndUpdate(userId,{status:"suspended"})
                 if(!user){
                     return reject({statusCode:400,msg:MSG_TYPES.NOT_FOUND})
                 }
+
                 resolve(user)
             }catch(error){
                 reject({ statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})
