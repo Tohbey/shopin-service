@@ -6,6 +6,8 @@ router.post("/",controller.admin.createAdmin)
 
 router.get("",[Auth, hasRole(ROLES.ADMIN, ROLES.SUPER_ADMIN)],controller.admin.getAllAdmin)
 
+router.get("/superAdmin",[Auth, hasRole(ROLES.SUPER_ADMIN)],controller.admin.getAllSuperAdmin)
+
 router.get("/:id",[Auth, hasRole(ROLES.ADMIN, ROLES.SUPER_ADMIN)],controller.admin.getAdmin)
 
 router.get("/me",Auth,controller.admin.getMe)

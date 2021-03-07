@@ -44,7 +44,7 @@ class UserService{
                 const users = await User.find({role: "User"})
                 .skip(skip).limit(pageSize)
 
-                const total = await User.find().countDocuments()
+                const total = await User.find({role: "User"}).countDocuments()
 
                 resolve({ users, total })
             }catch(error){

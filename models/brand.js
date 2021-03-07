@@ -3,7 +3,22 @@ const objectId = mongoose.Types.ObjectId
 
 const brandSchema = new mongoose.Schema(
   {
-
+    name:{
+      type:String,
+      required: true
+    },
+    img:{
+      type:String
+    },
+    createdBy:{
+      type:objectId,
+      required: true,
+      ref: "User"
+    },
+    description:{
+      type:String,
+      required: true
+    }
   },
   {
     timestamps: true,

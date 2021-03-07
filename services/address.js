@@ -7,11 +7,11 @@ class AddressService{
     static create(body){
         return new Promise(async (resolve, reject) => {
             try{
-                const address = Address.findOne({
+                const address = await Address.findOne({
                     address:body.address,
                     user: body.user
                 })
-                if(address){
+                if(!address){
                     return reject({statusCode:400, msg:MSG_TYPES.ACCOUNT_EXIST})
                 }
                 
@@ -29,7 +29,7 @@ class AddressService{
                 const address = await Address.find({user:user._id})
                 .skip(skip).limit(pageSize)
 
-                const total = await Address.find().countDocuments()
+                const total = await Address.find({user:user._id}).countDocuments()
 
                 resolve({address, total})
             }catch(error){
@@ -57,7 +57,7 @@ class AddressService{
     static update(addressId,addressObject,userId){
         return new Promise(async (resolve, reject) => {
             try{
-                const address = await Address.findById({
+                const address = await Address.findOne({
                     _id: addressId,
                     user: userId
                 })

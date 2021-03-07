@@ -89,9 +89,6 @@ exports.updateAddress =  async(req, res, next) => {
         const addressId = req.params.addressId
         const user = req.user._id
     
-        const { error } = validateAddress(req.body)
-        if(error) return JsonResponse(res, 400, error.details[0].message)
-    
         await AddressService.update(addressId, req.body,user);
     
         return JsonResponse(res, 200, MSG_TYPES.UPDATED);

@@ -38,6 +38,23 @@ exports.getAllAdmin = async(req, res, next) => {
     }   
 }
 
+exports.getAllSuperAdmin = async(req, res, next) => {
+    try {
+        const { page, pageSize, skip } = paginate(req);
+        
+        const {superAdmins, total } = await AdminService.getAllSuperAdmin(skip,pageSize)
+
+        const meta ={
+            total,
+            pagination:{ pageSize, page }
+        }
+
+        JsonResponse(res, 200, MSG_TYPES.FETCHED, superAdmins, meta)
+    } catch (error) {
+        next(error)
+    }   
+}
+
 exports.suspendAdmin = async(req, res, next) => {
     try {
         const superAdmin = req.user._id

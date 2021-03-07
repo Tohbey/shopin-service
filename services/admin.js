@@ -2,7 +2,7 @@ const User = require('../models/user')
 const { MSG_TYPES } = require('../constant/types');
 const { GenerateOTP, GenerateToken, mailSender} = require("../utils/index")
 const moment = require("moment");
-const bcrypt = require("bcrypt")
+const {ROLES} = require("../middlewares/auth")
 
 class AdminService{
 
@@ -41,10 +41,10 @@ class AdminService{
     static getAllAdmin(skip, pageSize){
         return new Promise(async (resolve, reject) => {
             try {
-                const admins = await User.find({role: "Admin"})
+                const admins = await User.find({role: ROLES.ADMIN})
                 .skip(skip).limit(pageSize)
 
-                const total = await User.find().countDocuments()
+                const total = await User.find({role: ROLES.ADMIN}).countDocuments()
                 if(total < 0) return reject({statusCode:200, msg:"No Admin yet"})
 
                 resolve({ admins, total })
@@ -54,23 +54,40 @@ class AdminService{
         })
     }
 
+    static getAllSuperAdmin(skip, pageSize){
+        return new Promise(async (resolve, reject) => {
+            try {
+                const superAdmins = await User.find({role: ROLES.SUPER_ADMIN})
+                .skip(skip).limit(pageSize)
+
+                const total = await User.find({role: ROLES.SUPER_ADMIN}).countDocuments()
+                if(total < 0) return reject({statusCode:200, msg:"No Super Admin yet"})
+
+                resolve({ superAdmins, total })
+            } catch (error) {
+                reject({statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})
+            }
+        })
+    }
+
+
     static suspendAdmin(adminId, superAdminId){
         return new Promise(async (resolve, reject) => {
             try {
                 const superAdmin = await User.findOne({
-                    role:"SuperAdmin",
+                    role: ROLES.SUPER_ADMIN,
                     _id: superAdminId,
-                    status:"active"
+                    status: "active"
                 })
                 if(!superAdmin){
                     return reject({statusCode:400, msg:MSG_TYPES.NOT_ALLOWED})
                 }
 
                 const admin = await User.findOneAndUpdate({
-                    role:"Admin",
+                    role:ROLES.ADMIN,
                     _id:adminId,
-                    status:"active"
-                }, {status:"suspended"})
+                    status: "active"
+                }, {status: "suspended"})
 
                 if(!admin) return reject({statusCode:400, msg:MSG_TYPES.NOT_FOUND})
                 
@@ -86,8 +103,8 @@ class AdminService{
             try {
                 const admin = await User.findOne({
                     _id: userId,
-                    status:"active",
-                    role:"Admin"
+                    status: "active",
+                    role:ROLES.ADMIN
                 })
 
                 if(!admin) return reject({statusCode:400, msg:MSG_TYPES.NOT_FOUND})
