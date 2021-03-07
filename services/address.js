@@ -26,7 +26,7 @@ class AddressService{
     static getAlladdress(skip,pageSize,user){
         return new Promise(async (resolve, reject) => {
             try{
-                const address = await Address.find({user:user})
+                const address = await Address.find({user:user._id})
                 .skip(skip).limit(pageSize)
 
                 const total = await Address.find().countDocuments()
@@ -39,10 +39,10 @@ class AddressService{
     }
 
 
-    static getaddress(addressId){
+    static getaddress(filter){
         return new Promise(async (resolve, reject) => {
             try{
-                const address = await Address.findById(addressId)
+                const address = await Address.find({filter})
 
                 if(!address){
                     return reject({code:400,msg:MSG_TYPES.NOT_FOUND})
@@ -54,10 +54,14 @@ class AddressService{
         })
     }
 
-    static update(addressId,addressObject){
+    static update(addressId,addressObject,userId){
         return new Promise(async (resolve, reject) => {
             try{
-                const address = await Address.findById(addressId)
+                const address = await Address.findById({
+                    _id: addressId,
+                    user: userId
+                })
+
                 if(!address){
                     return reject({statusCode:400,msg:MSG_TYPES.NOT_FOUND})
                 }
@@ -74,10 +78,14 @@ class AddressService{
         })
     }
 
-    static delete(addressId){
+    static delete(addressId, userId){
         return new Promise(async (resolve, reject) => {
             try{
-                const address = await Address.findById(addressId)
+                const address = await Address.findById({
+                    _id: addressId,
+                    user: userId
+                })
+
                 if(!address){
                     return reject({statusCode:400,msg:MSG_TYPES.NOT_FOUND})
                 }
@@ -85,6 +93,39 @@ class AddressService{
                 await address.delete()
                 resolve(address)
             }catch(error){
+                reject({statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})
+            }
+        })
+    }
+
+
+    static setDefault(userId,addressId){
+        return new Promise(async (resolve, reject) => {
+            try {
+                const address = await Address.findOne({
+                    _id: addressId,
+                    user: userId,
+                    default: false
+                });
+
+                if(!address){
+                    return reject({statusCode:400,msg:MSG_TYPES.NOT_FOUND})
+                }
+
+                await Address.updateOne(
+                    {user: userId, default: true},
+                    {
+                        $set:{
+                            default: false
+                        }
+                    }
+                );
+
+                address.default = true;
+                address = await address.save();
+
+                resolve(address)
+            } catch (error) {
                 reject({statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})
             }
         })

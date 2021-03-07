@@ -5,9 +5,9 @@ require('dotenv').config();
 const jwtSecret = process.env.JWT_SECRET
 
 const ROLES = {
-  SUPER_ADMIN: "superAdmin",
-  ADMIN: "admin",
-  USER:"user"
+  SUPER_ADMIN: "SuperAdmin",
+  ADMIN: "Admin",
+  USER:"User"
 }
 
 const Auth  = (req,res,next)  => {
@@ -26,10 +26,10 @@ const Auth  = (req,res,next)  => {
     }
 }
 
-const hasRole = (role) => {
+const hasRole = (roles = []) => {
     return async( req, res, next) => {
         const userRole = req.user.role
-        if(role != userRole){
+        if(!roles.includes(userRole)){
             return JsonResponse(res, 400, MSG_TYPES.PERMISSION)
         }
         next()
@@ -38,5 +38,6 @@ const hasRole = (role) => {
 
 module.exports = {
     Auth,
-    hasRole
+    hasRole,
+    ROLES
 }
