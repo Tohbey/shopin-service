@@ -10,7 +10,7 @@ router.get("/:address", Auth, controller.address.getAddress)
 
 router.get("/default", Auth, controller.address.getDefault)
 
-router.patch("/default", Auth, controller.address.setDefault)
+router.patch("/default/:addressId", Auth, controller.address.setDefault)
 
 router.patch("/:addressId", Auth, controller.address.updateAddress)
 

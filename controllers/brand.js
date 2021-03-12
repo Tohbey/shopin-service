@@ -38,6 +38,26 @@ exports.getBrands = async(req, res, next) => {
     }
 }
 
+exports.getBrandsByAdmin = async(req, res, next) => {
+    try {
+        const { page, pageSize, skip } = paginate(req);
+        const filter = {
+            user: req.params.adminId
+        };
+
+        const { brands, total } = await BrandService.getBrands(skip, pageSize, filter);
+
+        const meta ={ 
+            total,
+            pagination: {pageSize, page}
+        }
+
+        JsonResponse(res, 201, MSG_TYPES.FETCHED, brands, meta)
+    } catch (error) {
+        next(error)
+    }
+}
+
 exports.getBrand = async(req, res, next) => {
     try {
         const brandId = req.params.brandId;

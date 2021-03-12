@@ -1,7 +1,7 @@
 //all routers working perfectly 
 const router = require("express").Router();
 const controller = require("../controllers");
-const {Auth, hasRole} = require('../middlewares/auth')
+const { Auth } = require('../middlewares/auth')
 
 router.get("/",Auth,controller.user.getAllUser)
 
