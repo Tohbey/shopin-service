@@ -1,3 +1,4 @@
+//all routers working perfectly 
 const router = require("express").Router();
 const controller = require("../controllers");
 const { Auth, hasRole, ROLES }  = require("../middlewares/auth")
@@ -8,15 +9,13 @@ router.get("",[Auth, hasRole(ROLES.ADMIN, ROLES.SUPER_ADMIN)],controller.admin.g
 
 router.get("/superAdmin",[Auth, hasRole(ROLES.SUPER_ADMIN)],controller.admin.getAllSuperAdmin)
 
-router.get("/:id",[Auth, hasRole(ROLES.ADMIN, ROLES.SUPER_ADMIN)],controller.admin.getAdmin)
+router.get("/:adminId",[Auth, hasRole(ROLES.ADMIN, ROLES.SUPER_ADMIN)],controller.admin.getAdmin)
 
-router.get("/me",Auth,controller.admin.getMe)
+router.patch("/:adminId",Auth,controller.admin.update)
 
-router.patch("/",Auth,controller.admin.update)
+router.patch("/suspend/:adminId",[Auth, hasRole(ROLES.SUPER_ADMIN)],controller.admin.suspendAdmin)
 
-router.patch("/suspend/:id",[Auth, hasRole(ROLES.SUPER_ADMIN)],controller.admin.suspendAdmin)
-
-router.patch("/suspend/user/:userId",[Auth, hasRole(ROLES.ADMIN, ROLES.SUPER_ADMIN)],controller.user.suspendUser)
+router.patch("/suspend/user/:userId",[Auth, hasRole(ROLES.SUPER_ADMIN)],controller.admin.suspendUser)
 
 router.delete("/", Auth, controller.user.teminateMe)
 

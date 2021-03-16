@@ -98,14 +98,36 @@ class AdminService{
         })
     }
 
-    static getAdmin(userId){
+    static suspendUser(userId, superAdminId){
         return new Promise(async (resolve, reject) => {
             try {
-                const admin = await User.findOne({
-                    _id: userId,
-                    status: "active",
-                    role:ROLES.ADMIN
+                const superAdmin = await User.findOne({
+                    role: ROLES.SUPER_ADMIN,
+                    _id: superAdminId,
+                    status: "active"
                 })
+                if(!superAdmin){
+                    return reject({statusCode:400, msg:MSG_TYPES.NOT_ALLOWED})
+                }
+
+                const user = await User.findOneAndUpdate({
+                    role:ROLES.USER,
+                    _id:userId,
+                    status: "active"
+                }, {status: "suspended"})
+                if(!user) return reject({statusCode:400, msg:MSG_TYPES.NOT_FOUND})
+                
+                resolve(user)
+            } catch (error) {
+                reject({statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})
+            }
+        })
+    }
+
+    static getAdminById(adminId){
+        return new Promise(async (resolve, reject) => {
+            try {
+                const admin = await User.findById(adminId)
 
                 if(!admin) return reject({statusCode:400, msg:MSG_TYPES.NOT_FOUND})
                 

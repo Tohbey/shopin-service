@@ -102,24 +102,6 @@ exports.updateUser =  async(req, res, next) => {
 }
 
 /** 
- * suspend user
- * @param {*} req
- * @param {*} res
-*/
-exports.suspendUser =  async(req, res, next) => {
-    try{
-        const adminId = req.user._id
-        const userId = req.userId
-
-        const user = await UserService.suspendUser(userId, adminId);
-
-        return JsonResponse(res, 200, MSG_TYPES.SUSPENDED, user);
-    }catch(error){
-        next(error)
-    }
-}
-
-/** 
  * get teminate current user
  * @param {*} req
  * @param {*} res

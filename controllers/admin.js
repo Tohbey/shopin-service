@@ -5,7 +5,6 @@ const { validateUser } = require("../request/user");
 const AdminService = require("../services/admin");
 const bcrypt = require('bcrypt');
 
-
 exports.createAdmin = async(req, res, next) => {
     try {
         const { error } = validateUser(req.body)
@@ -15,6 +14,7 @@ exports.createAdmin = async(req, res, next) => {
         req.body.password = await bcrypt.hash(req.body.password, salt)
         
         let createAdmin = await AdminService.create(req.body)
+
         JsonResponse(res, 201, MSG_TYPES.CREATED, createAdmin)
     } catch (error) {
         next(error)
@@ -59,7 +59,7 @@ exports.suspendAdmin = async(req, res, next) => {
     try {
         const superAdmin = req.user._id
         
-        const adminId = req.params.id
+        const adminId = req.params.adminId
 
         const admin = await AdminService.suspendAdmin(adminId, superAdmin)
         
@@ -69,23 +69,25 @@ exports.suspendAdmin = async(req, res, next) => {
     }   
 }
 
-exports.getAdmin = async(req, res, next) => {
+exports.suspendUser = async(req, res, next) => {
     try {
-        const adminId = req.params.id;
+        const superAdmin = req.user._id
+        
+        const userId = req.params.userId
 
-        const admin = await AdminService.getAdmin(adminId)
-
-        JsonResponse(res, 200, MSG_TYPES.FETCHED, admin)
+        const user = await AdminService.suspendUser(userId, superAdmin)
+        
+        JsonResponse(res, 200, MSG_TYPES.SUSPENDED, user)
     } catch (error) {
         next(error)
     }   
 }
 
-exports.getMe = async(req, res, next) => {
+exports.getAdmin = async(req, res, next) => {
     try {
-        const adminId = req.user._id
+        const adminId = req.params.adminId;
 
-        const admin = await AdminService.getAdmin(adminId)
+        const admin = await AdminService.getAdminById(adminId)
 
         JsonResponse(res, 200, MSG_TYPES.FETCHED, admin)
     } catch (error) {
@@ -95,11 +97,11 @@ exports.getMe = async(req, res, next) => {
 
 exports.update = async(req, res, next) => {
     try {
-        const adminId = req.user._id
+        const adminId = req.params.adminId
         
         await AdminService.update(adminId, req.body);
 
-        return JsonResponse(res, 200, MSG_TYPES.UPDATED)
+        JsonResponse(res, 200, MSG_TYPES.UPDATED)
     } catch (error) {
         next(error)
     }   
@@ -109,7 +111,7 @@ exports.teminateMe = async(req, res, next) => {
     try {
         const user = await AdminService.terminateMe(req.user)
 
-        return JsonResponse(res, 200, MSG_TYPES.DELETED)
+        JsonResponse(res, 200, MSG_TYPES.DELETED)
     } catch (error) {
         next(error)    
     }

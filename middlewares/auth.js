@@ -27,13 +27,19 @@ const Auth  = (req,res,next)  => {
 }
 
 const hasRole = (roles = []) => {
-    return async( req, res, next) => {
-        const userRole = req.user.role
-        if(!roles.includes(userRole)){
-            return JsonResponse(res, 400, MSG_TYPES.PERMISSION)
+    return async (req, res, next) => {
+        if (req.user.role === ROLES.SUPER_ADMIN) {
+          next();
+        } else {
+          if (roles.length < 1) {
+            return JsonResponse(res, 403, MSG_TYPES.PERMISSION);
+          }
+          if (roles.includes(req.user.role)) {
+            return next();
+          }
+          return JsonResponse(res, 403, MSG_TYPES.PERMISSION);
         }
-        next()
-    }
+      };
 }
 
 module.exports = {
