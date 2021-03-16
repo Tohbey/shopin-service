@@ -10,7 +10,7 @@ class BrandService{
                     name: body.name,
                     user: body.user
                 })
-                if(!brand){
+                if(brand){
                     return reject({statusCode:400, msg:MSG_TYPES.BRAND_EXIST})
                 }
 
