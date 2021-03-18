@@ -11,12 +11,12 @@ class AuthService{
             try{
                 const user = await User.findOne({email:body.email})
                 if(!user){
-                    return reject({statusCode:400,msg:MSG_TYPES.ACCOUNT_INVALID})
+                    return reject({statusCode:404,msg:MSG_TYPES.ACCOUNT_INVALID})
                 }
 
                 const validPassword = await bcrypt.compare(body.password,user.password)
                 if(!validPassword){
-                    return reject({statusCode:400,msg:MSG_TYPES.INVALID_PASSWORD})
+                    return reject({statusCode:404,msg:MSG_TYPES.INVALID_PASSWORD})
                 }
 
                 const token = user.generateAuthToken();
@@ -44,7 +44,7 @@ class AuthService{
                     "rememberToken.expiredDate": { $gte: currentDate },
                 })
                 if(!user){
-                    return reject({statusCode:400,msg:MSG_TYPES.NOT_FOUND})
+                    return reject({statusCode:404,msg:MSG_TYPES.NOT_FOUND})
                 }
                 
                 await user.updateOne({
@@ -70,7 +70,7 @@ class AuthService{
                     status:"inactive"
                 })
                 if(!user){
-                    reject({statusCode:400, msg:MSG_TYPES.NOT_FOUND})
+                    reject({statusCode:404, msg:MSG_TYPES.NOT_FOUND})
                 }
 
                 const otp = GenerateOTP(4)
@@ -109,7 +109,7 @@ class AuthService{
                     status:"active"
                 })
                 if(!currentUser){
-                    reject({statusCode:400, msg:MSG_TYPES.ACCOUNT_EXIST})
+                    reject({statusCode:404, msg:MSG_TYPES.ACCOUNT_EXIST})
                 }
 
                 const validPassword = await bcrypt.compare(
@@ -117,7 +117,7 @@ class AuthService{
                     currentUser.password
                 )
                 if(!validPassword){
-                    return reject({statusCode: 400, msg: MSG_TYPES.ACCOUNT_INVALID});
+                    return reject({statusCode: 404, msg: MSG_TYPES.ACCOUNT_INVALID});
                 }
 
                 const salt = await bcrypt.genSalt(10);

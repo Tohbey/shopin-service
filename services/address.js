@@ -45,7 +45,7 @@ class AddressService{
                 const address = await Address.find(filter)
 
                 if(!address){
-                    return reject({code:400,msg:MSG_TYPES.NOT_FOUND})
+                    return reject({code:404,msg:MSG_TYPES.NOT_FOUND})
                 }
                 resolve(address)
             }catch(error){
@@ -63,7 +63,7 @@ class AddressService{
                 })
 
                 if(!address){
-                    return reject({statusCode:400,msg:MSG_TYPES.NOT_FOUND})
+                    return reject({statusCode:404,msg:MSG_TYPES.NOT_FOUND})
                 }
 
                 await address.updateOne(
@@ -87,7 +87,7 @@ class AddressService{
                 })
 
                 if(!address){
-                    return reject({statusCode:400,msg:MSG_TYPES.NOT_FOUND})
+                    return reject({statusCode:404,msg:MSG_TYPES.NOT_FOUND})
                 }
 
                 await address.delete()
@@ -121,7 +121,7 @@ class AddressService{
                 );
 
                 address.default = true;
-                address = await address.save();
+                await address.save();
 
                 resolve(address)
             } catch (error) {

@@ -8,10 +8,10 @@ class BrandService{
             try {
                 const brand = await Brand.findOne({
                     name: body.name,
-                    user: body.user
+                    admin: body.user
                 })
                 if(brand){
-                    return reject({statusCode:400, msg:MSG_TYPES.BRAND_EXIST})
+                    return reject({statusCode:404, msg:MSG_TYPES.BRAND_EXIST})
                 }
 
                 const createBrand = await Brand.create(body)
@@ -25,10 +25,10 @@ class BrandService{
     static getBrands(skip,pageSize,filter){
         return new Promise(async (resolve, reject) => {
             try {
-                const brands = await Brand.find({filter})
+                const brands = await Brand.find(filter)
                 .skip(skip).limit(pageSize)
 
-                const total = await Brand.find({filter}).countDocuments();
+                const total = await Brand.find(filter).countDocuments();
                 if(total < 0) return reject({statusCode:200, msg:"No Brand yet"})
 
                 resolve({brands, total})
@@ -43,10 +43,10 @@ class BrandService{
             try {
                 const brand = await Brand.findOne({
                     _id: brandId,
-                    user: userId
+                    admin: userId
                 })
                 if(!brand){
-                    return reject({statusCode:400, msg:MSG_TYPES.NOT_FOUND})
+                    return reject({statusCode:404, msg:MSG_TYPES.NOT_FOUND})
                 }
 
                 await brand.updateOne(
@@ -66,7 +66,7 @@ class BrandService{
             try {
                 const brand = await Brand.findById(brandId)
                 if(!brand){
-                    return reject({statusCode:400, msg:MSG_TYPES.NOT_FOUND})
+                    return reject({statusCode:404, msg:MSG_TYPES.NOT_FOUND})
                 }
 
                 resolve(brand)
@@ -81,10 +81,10 @@ class BrandService{
             try {
                 const brand = await Brand.findOne({
                    _id: brandId,
-                   user: userId
+                   admin: userId
                 })
                 if(!brand){
-                    return reject({statusCode:400, msg:MSG_TYPES.NOT_FOUND})
+                    return reject({statusCode:404, msg:MSG_TYPES.NOT_FOUND})
                 }
 
                 await brand.delete();

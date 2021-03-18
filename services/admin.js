@@ -15,7 +15,7 @@ class AdminService{
                     role: body.role
                 })
                 if(!admin) {
-                    return reject({statusCode:400, msg:MSG_TYPES.ACCOUNT_EXIST})
+                    return reject({statusCode:404, msg:MSG_TYPES.ACCOUNT_EXIST})
                 }
 
                 const otp = GenerateOTP(4);
@@ -80,7 +80,7 @@ class AdminService{
                     status: "active"
                 })
                 if(!superAdmin){
-                    return reject({statusCode:400, msg:MSG_TYPES.NOT_ALLOWED})
+                    return reject({statusCode:404, msg:MSG_TYPES.NOT_ALLOWED})
                 }
 
                 const admin = await User.findOneAndUpdate({
@@ -89,7 +89,7 @@ class AdminService{
                     status: "active"
                 }, {status: "suspended"})
 
-                if(!admin) return reject({statusCode:400, msg:MSG_TYPES.NOT_FOUND})
+                if(!admin) return reject({statusCode:404, msg:MSG_TYPES.NOT_FOUND})
                 
                 resolve({admin})
             } catch (error) {
@@ -107,7 +107,7 @@ class AdminService{
                     status: "active"
                 })
                 if(!superAdmin){
-                    return reject({statusCode:400, msg:MSG_TYPES.NOT_ALLOWED})
+                    return reject({statusCode:404, msg:MSG_TYPES.NOT_ALLOWED})
                 }
 
                 const user = await User.findOneAndUpdate({
@@ -115,7 +115,7 @@ class AdminService{
                     _id:userId,
                     status: "active"
                 }, {status: "suspended"})
-                if(!user) return reject({statusCode:400, msg:MSG_TYPES.NOT_FOUND})
+                if(!user) return reject({statusCode:404, msg:MSG_TYPES.NOT_FOUND})
                 
                 resolve(user)
             } catch (error) {
@@ -129,7 +129,7 @@ class AdminService{
             try {
                 const admin = await User.findById(adminId)
 
-                if(!admin) return reject({statusCode:400, msg:MSG_TYPES.NOT_FOUND})
+                if(!admin) return reject({statusCode:404, msg:MSG_TYPES.NOT_FOUND})
                 
                 resolve(admin)
             } catch (error) {
@@ -143,7 +143,7 @@ class AdminService{
             try {
                 const admin = await User.findById(userId)
                 if(!admin){
-                    return reject({statusCode:400,msg:MSG_TYPES.NOT_FOUND})
+                    return reject({statusCode:404,msg:MSG_TYPES.NOT_FOUND})
                 }
 
                 await admin.updateOne(
@@ -166,7 +166,7 @@ class AdminService{
                     status: "active"
                 })
                 if(!currentAdmin){
-                    return reject({statusCode:400,msg:MSG_TYPES.NOT_FOUND})
+                    return reject({statusCode:404,msg:MSG_TYPES.NOT_FOUND})
                 }
 
                 await currentAdmin.delete()

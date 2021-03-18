@@ -15,7 +15,7 @@ class UserService{
                     role:"User"
                 })
                 if(!user){
-                    reject({statusCode:400, msg:MSG_TYPES.ACCOUNT_EXIST})
+                    reject({statusCode:404, msg:MSG_TYPES.ACCOUNT_EXIST})
                 }
                 
                 const otp = GenerateOTP(4);
@@ -60,7 +60,7 @@ class UserService{
                 const user = await User.findById(userId)
 
                 if(!user){
-                    return reject({code:400,msg:MSG_TYPES.NOT_FOUND})
+                    return reject({code:404,msg:MSG_TYPES.NOT_FOUND})
                 }
 
                 resolve(user)
@@ -75,7 +75,7 @@ class UserService{
             try{
                 const user = await User.findById(userId)
                 if(!user){
-                    return reject({statusCode:400,msg:MSG_TYPES.NOT_FOUND})
+                    return reject({statusCode:404,msg:MSG_TYPES.NOT_FOUND})
                 }
 
                 await user.updateOne(
@@ -99,7 +99,7 @@ class UserService{
                     status: "active"
                 })
                 if(!currentUser){
-                    return reject({statusCode:400,msg:MSG_TYPES.NOT_FOUND})
+                    return reject({statusCode:404,msg:MSG_TYPES.NOT_FOUND})
                 }
 
                 await currentUser.delete()

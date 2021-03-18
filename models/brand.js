@@ -10,7 +10,7 @@ const brandSchema = new mongoose.Schema(
     img:{
       type:String
     },
-    createdBy:{
+    admin:{
       type:objectId,
       required: true,
       ref: "User"
@@ -26,6 +26,6 @@ const brandSchema = new mongoose.Schema(
 );
 
 
-const Brand = mongoose.model("Product", brandSchema);
+const Brand = mongoose.model("Brand", brandSchema);
 
 module.exports = Brand;

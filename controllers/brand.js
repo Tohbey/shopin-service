@@ -7,6 +7,7 @@ const BrandService = require("../services/brand");
 
 exports.createBrand = async(req, res, next) => {
     try {
+        req.body.admin = req.user._id;
         const { error } = validateBrand(req.body)
         if(error) return JsonResponse(ress, 400, error.details[0].message)
 
@@ -21,9 +22,7 @@ exports.createBrand = async(req, res, next) => {
 exports.getBrands = async(req, res, next) => {
     try {
         const { page, pageSize, skip } = paginate(req);
-        const filter = {
-            user: req.user._id
-        };
+        const filter = {};
 
         const { brands, total } = await BrandService.getBrands(skip, pageSize, filter);
 
@@ -42,7 +41,7 @@ exports.getBrandsByAdmin = async(req, res, next) => {
     try {
         const { page, pageSize, skip } = paginate(req);
         const filter = {
-            user: req.params.adminId
+            admin: req.params.adminId
         };
 
         const { brands, total } = await BrandService.getBrands(skip, pageSize, filter);

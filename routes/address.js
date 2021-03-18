@@ -11,7 +11,6 @@ router.get("/:address", Auth, controller.address.getAddress)
 //not working
 router.get("/default", Auth, controller.address.getDefault)
 
-//not working
 router.patch("/default/:addressId", Auth, controller.address.setDefault)
 
 router.patch("/:addressId", Auth, controller.address.updateAddress)

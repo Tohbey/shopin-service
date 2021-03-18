@@ -1,3 +1,4 @@
+//all routers working perfectly 
 const router = require("express").Router();
 const controller = require("../controllers");
 const { Auth, hasRole, ROLES }  = require("../middlewares/auth")
@@ -6,7 +7,7 @@ router.post("/", [Auth, hasRole(ROLES.ADMIN, ROLES.SUPER_ADMIN)] ,controller.bra
 
 router.get("/", Auth ,controller.brand.getBrands)
 
-router.get("admin/:adminId", Auth ,controller.brand.getBrandsByAdmin)
+router.get("/admin/:adminId", Auth ,controller.brand.getBrandsByAdmin)
 
 router.get("/:brandId", Auth, controller.brand.getBrand)
 

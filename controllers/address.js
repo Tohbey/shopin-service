@@ -59,8 +59,6 @@ exports.getAddress =  async(req, res, next) => {
 exports.getDefault =  async(req, res, next) => {
     try{
         const user = req.user._id
-        console.log("get defaults")
-        console.log(user)
         const address = await AddressService.getDefault(user)
 
         return JsonResponse(res, 200, MSG_TYPES.FETCHED, address)
