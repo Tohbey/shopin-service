@@ -7,7 +7,9 @@ const dbURL = process.env.MONGO_URL
 
 module.exports = function(){
     mongoose.connect(dbURL,{
-       useFindAndModify: false
+       useFindAndModify: false,
+       useNewUrlParser: true,
+       useUnifiedTopology: true
     })
     .then(() => winston.info('-------Successfully connected to MongoDB-------'))
 }
