@@ -20,9 +20,9 @@ exports.createUser =  async(req, res, next) => {
         const salt = await bcrypt.genSalt(10)
         req.body.password = await bcrypt.hash(req.body.password,salt)
 
-        let createUser = await UserService.create(req.body)
+        let {newUser, otp} = await UserService.create(req.body)
         
-        JsonResponse(res, 201, MSG_TYPES.CREATED, createUser)
+        JsonResponse(res, 201, MSG_TYPES.CREATED, newUser, otp)
     }catch(error){
         next(error)
     }

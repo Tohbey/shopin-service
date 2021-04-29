@@ -8,6 +8,7 @@ const MSG_TYPES = Object.freeze({
     ACCOUNT_VERIFIED: "Account Successfully Verified",
     ORDER_POSTED: "Order Successfully Posted",
     ACCOUNT_EXIST: "Account already exist.",
+    PRODUCT_EXIST: "Product already exist.",
     BRAND_EXIST: "Brand already exist.",
     ACCOUNT_INVALID: "Invalid email or password",
     SUSPENDED: "Account is suspended!",

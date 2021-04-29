@@ -2,20 +2,19 @@ const User = require("../models/user")
 const { MSG_TYPES } = require('../constant/types');
 const { GenerateOTP, GenerateToken, mailSender} = require("../utils/index")
 const moment = require("moment");
-const bcrypt = require("bcrypt")
 
 class UserService{
 
     static create(body){
         return new Promise(async (resolve, reject) => {
             try{
-                const user = User.findOne({
+                const user = await User.findOne({
                     email:body.email,
                     name:body.name,
                     role:"User"
                 })
-                if(!user){
-                    reject({statusCode:404, msg:MSG_TYPES.ACCOUNT_EXIST})
+                if(user){
+                   return reject({statusCode:404, msg: MSG_TYPES.ACCOUNT_EXIST})
                 }
                 
                 const otp = GenerateOTP(4);
@@ -26,7 +25,7 @@ class UserService{
                 newUser.rememberToken.expiredDate = moment().add(20, "minutes");
                 await newUser.save();
 
-                //email notification
+                // email notification
                 // const subject = "User Verification Code";
                 // const text = "Plsease use the OTP code: "+otp+" to verify your account";
                 // await mailSender(newUser.email,subject,text)

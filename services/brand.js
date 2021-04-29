@@ -8,7 +8,7 @@ class BrandService{
             try {
                 const brand = await Brand.findOne({
                     name: body.name,
-                    admin: body.user
+                    admin: body.admin
                 })
                 if(brand){
                     return reject({statusCode:404, msg:MSG_TYPES.BRAND_EXIST})

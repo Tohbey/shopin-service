@@ -9,12 +9,12 @@ class AdminService{
     static create(body){
         return new Promise(async (resolve, reject) => {
             try {
-                const admin = User.findOne({
+                const admin = await User.findOne({
                     email:body.email,
                     name:body.name,
                     role: body.role
                 })
-                if(!admin) {
+                if(admin) {
                     return reject({statusCode:404, msg:MSG_TYPES.ACCOUNT_EXIST})
                 }
 
