@@ -23,12 +23,13 @@ class UserService{
                 newUser.email.toLowerCase();
                 newUser.rememberToken.token = otp;
                 newUser.rememberToken.expiredDate = moment().add(20, "minutes");
-                await newUser.save();
 
                 // email notification
-                // const subject = "User Verification Code";
-                // const text = "Plsease use the OTP code: "+otp+" to verify your account";
-                // await mailSender(newUser.email,subject,text)
+                const subject = "User Verification Code";
+                const text = "Please use the OTP code: "+otp+" to verify your account";
+                await mailSender(newUser.email,subject,text)
+                
+                await newUser.save();
 
                 resolve({newUser, otp})
             }catch(error){

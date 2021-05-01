@@ -13,9 +13,9 @@ exports.createAdmin = async(req, res, next) => {
         const salt = await bcrypt.genSalt(10)
         req.body.password = await bcrypt.hash(req.body.password, salt)
         
-        let createAdmin = await AdminService.create(req.body)
+        let {newAdmin, otp } = await AdminService.create(req.body)
 
-        JsonResponse(res, 201, MSG_TYPES.CREATED, createAdmin)
+        JsonResponse(res, 201, MSG_TYPES.CREATED, newAdmin, otp)
     } catch (error) {
         next(error)
     }   

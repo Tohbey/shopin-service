@@ -24,12 +24,13 @@ class AdminService{
                 newAdmin.email.toLowerCase();
                 newAdmin.rememberToken.token = otp;
                 newAdmin.rememberToken.expiredDate = moment().add(20, "minutes");
-                await newAdmin.save();
 
                 //email notification
-                // const subject = "User Verification Code";
-                // const text = "Plsease use the OTP code: "+otp+" to verify your account";
-                // await mailSender(newAdmin.email,subject,text)
+                const subject = "Admin Verification Code";
+                const text = "Please use the OTP code: "+otp+" to verify your account";
+                await mailSender(newAdmin.email,subject,text)
+
+                await newAdmin.save();
 
                 resolve({newAdmin, otp})
             } catch (error) {

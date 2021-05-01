@@ -4,7 +4,7 @@ const {ROLES} = require("../middlewares/auth")
 
 class ProductService{
 
-    static create(body){
+    static create(body, file){
         return new Promise(async (resolve, reject) => {
             try {
                 const product = await Product.findOne({
@@ -71,7 +71,7 @@ class ProductService{
     )}
 
 
-    static updateProduct(productObject, productId, userId){
+    static updateProduct(productObject, productId, adminId){
         return new Promise(async (resolve, reject) => {
             try {
                 const product = await Product.findOne({

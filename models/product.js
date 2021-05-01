@@ -4,7 +4,7 @@ const objectId = mongoose.Types.ObjectId
 const assetSchema = new mongoose.Schema({
   type: {
     type: String,
-    enum: ["img", "video"],
+    enum: ["img"],
     default: "img"
   },
   URL: {
@@ -79,7 +79,7 @@ const productSchema = new mongoose.Schema(
       default: null,
     },
     deletedBy: {
-      type: ObjectId,
+      type: objectId,
       ref: "User",
       default: null,
     },
