@@ -11,6 +11,10 @@ const assetSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  key:{
+    type: String,
+    required: true
+  },
   default: {
     type: Boolean,
     default: false,
@@ -45,11 +49,6 @@ const productSchema = new mongoose.Schema(
       required: true,
       maxlength: 50,
     }],
-    sizeString: {
-      type: String,
-      required: true,
-      maxlength: 1000,
-    },
     status: {
       type: String,
       enum: ["available", "out-of-sales"],

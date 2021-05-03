@@ -1,10 +1,12 @@
 const Product = require('../models/product')
 const { MSG_TYPES } = require('../constant/types');
 const {ROLES} = require("../middlewares/auth")
+const { AsyncForEach, uploadFilesFromBase64 } = require("../utils/index")
+const mongoose = require('mongoose');
 
 class ProductService{
 
-    static create(body, file){
+    static create(body){
         return new Promise(async (resolve, reject) => {
             try {
                 const product = await Product.findOne({
@@ -76,7 +78,7 @@ class ProductService{
             try {
                 const product = await Product.findOne({
                     _id: productId,
-                    admin: userId
+                    admin: adminId
                 })
                 if(!product) return reject({statusCode:404, msg:MSG_TYPES.NOT_FOUND})
 
@@ -86,12 +88,26 @@ class ProductService{
                     }
                 )
 
-                resolve(brand)
+                resolve(product)
             } catch (error) {
                 reject({statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})
             }
         }
     )}
+
+    static getAssets(files){
+        const img = []
+        for(let i =0;i<files.length; i++){
+            const assest = {
+                type: "img",
+                URL: files[i].location,
+                key: files[i].key,
+                default: false
+            }
+            img.push(assest)
+        }
+        return img
+    }
 }
 
 module.exports = ProductService

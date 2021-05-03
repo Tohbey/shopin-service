@@ -1,44 +1,17 @@
 const RandExp = require("randexp");
 const nodeMailer = require("nodemailer")
 const dotenv = require('dotenv').config();
-const multer = require('multer');
-const multerS3 = require('multer-s3')
-const aws = require('aws-sdk');
+const AWS = require('aws-sdk');
+const multer = require("multer")
+const multerS3 = require("multer-s3")
 
+
+const s3 = new AWS.S3({
+  accessKeyId: process.env.KEY_ID,
+  secretAccessKey: process.env.SECRET
+})
 const email  = process.env.email
 const password = process.env.password
-const s3 = new aws.S3({
-  accessKeyId: process.env.KEY_ID,
-  secretAccessKey: process.env.SECRET,
-})
-
-
-const storage = multer.diskStorage({
-  destination: function(req, file, cb){
-    cb(null, "./uploads/")
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname + '-' + Date.now())
-  }
-})
-
-//setting filter to the files just pictures with that format
-const fileFilter = (req, file, cb) => {
-  if(file.mimetype == "image/jpeg" || file.mimetype == "image/png" || file.mimetype == "image/jpg"){
-    cb(null, true)
-  }else{
-    cb(new Error("Wrong Format"), false)
-  }
-}
-
-const uploadFiles = multer({
-  storage,
-  limits:{
-    fileSize:  1024 * 1024 * 20 //20mb max
-  },
-  fileFilter
-})
-
 
 GenerateToken = (num) => {
   var text = "";
@@ -93,25 +66,65 @@ const paginate = (req) => {
   return { page, pageSize, skip };
 };
 
+const storage = multer.diskStorage({
+  destination: function(req, file, cb){
+    cb(null, "./uploads/")
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname + '-' + Date.now())
+  }
+})
+
+//setting filter to the files just pictures with that format
+const fileFilter = (req, file, cb) => {
+  if(file.mimetype == "image/jpeg" || file.mimetype == "image/png" || file.mimetype == "image/jpg"){
+    cb(null, true)
+  }else{
+    cb(new Error("Wrong Format"), false)
+  }
+}
+
+const uploadFiles = multer({
+  storage,
+  limits:{
+    fileSize:  1024 * 1024 * 20 //20mb max
+  },
+  fileFilter,
+})
+
+const uploadS3 = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.BUCKET,
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    key: function(req, file, cb){
+      cb(null,  file.originalname + '-' + Date.now())
+    },
+    acl: "public-read",
+    limits:{
+      fileSize:  1024 * 1024 * 20 //20mb max
+    },
+    fileFilter, 
+  })
+})
+
+const AsyncForEach = async (array, callback) => {
+  try {
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index], index, array);
+    }
+  } catch (error) {
+    console.log('Async for each error', error.message);
+
+  }
+};
 
 module.exports = {
   paginate,
   GenerateOTP,
   GenerateToken,
   mailSender,
-  uploadFiles
+  uploadFiles,
+  uploadS3,
+  AsyncForEach
 };
-
-
-
-// const uploadS3 = multer({
-//   storage: multerS3({
-//     s3: s3,
-//     bucket: process.env.BUCKET,
-//     contentType: multerS3.AUTO_CONTENT_TYPE,
-//     key: function(req, file, cb){
-//       cb(null, Date.now().toString())
-//     },
-//     acl: "public-read"
-//   })
-// })

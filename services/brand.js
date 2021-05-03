@@ -61,10 +61,10 @@ class BrandService{
         })
     }
 
-    static getBrand(brandId){
+    static getBrand(filter){
         return new Promise(async (resolve, reject) => {
             try {
-                const brand = await Brand.findById(brandId)
+                const brand = await Brand.findOne(filter)
                 if(!brand){
                     return reject({statusCode:404, msg:MSG_TYPES.NOT_FOUND})
                 }

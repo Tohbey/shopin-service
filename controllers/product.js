@@ -3,6 +3,7 @@ const { JsonResponse } = require("../lib/apiResponse");
 const { paginate } = require("../utils/index");
 const { validateProduct } = require("../request/product");
 const ProductService = require("../services/product")
+const BrandService = require("../services/brand")
 
 /** 
  * Create Product
@@ -11,14 +12,21 @@ const ProductService = require("../services/product")
 */
 exports.create = async(req, res, next) => {
     try {
+        req.body.admin = req.user._id;
+        const filter = {
+            name: req.body.brand,
+            admin: req.body.admin
+        }
+        const brand = await BrandService.getBrand(filter)
+        req.body.brand  = brand._id.toString();
+
+        const assets = await ProductService.getAssets(req.files)
+        req.body.assets = assets
+        
         const { error } = validateProduct(req.body)
         if(error) JsonResponse(res, 400, error.details[0].message)
-
-        // let createProduct = await ProductService.create(req.body, req.file)
-        let createProduct = {
-            body: req.body,
-            file: req.file
-        }
+        
+        let createProduct = await ProductService.create(req.body)
 
         JsonResponse(res, 201, MSG_TYPES.CREATED, createProduct)
     } catch (error) {

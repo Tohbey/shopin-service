@@ -57,11 +57,13 @@ exports.getBrandsByAdmin = async(req, res, next) => {
     }
 }
 
-exports.getBrand = async(req, res, next) => {
+exports.getBrandById = async(req, res, next) => {
     try {
-        const brandId = req.params.brandId;
+        const filter = {
+            _id: req.params.brandId
+        };
 
-        const brand = await BrandService.getBrand(brandId)
+        const brand = await BrandService.getBrand(filter)
 
         JsonResponse(res, 201, MSG_TYPES.FETCHED, brand)
     } catch (error) {

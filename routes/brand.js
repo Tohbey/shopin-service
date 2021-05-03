@@ -9,7 +9,7 @@ router.get("/", Auth ,controller.brand.getBrands)
 
 router.get("/admin/:adminId", Auth ,controller.brand.getBrandsByAdmin)
 
-router.get("/:brandId", Auth, controller.brand.getBrand)
+router.get("/:brandId", Auth, controller.brand.getBrandById)
 
 router.patch("/:brandId", [Auth, hasRole(ROLES.ADMIN, ROLES.SUPER_ADMIN)] ,controller.brand.update)
 

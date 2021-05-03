@@ -1,9 +1,9 @@
 const router = require("express").Router();
 const controller = require("../controllers");
 const { Auth, hasRole, ROLES }  = require("../middlewares/auth")
-const { uploadFiles } = require("../utils/index")
+const { uploadS3 } = require("../utils/index")
 
-router.post("/", [Auth, hasRole(ROLES.ADMIN, ROLES.SUPER_ADMIN)], uploadFiles.single('productImage'), controller.product.create)
+router.post("/", [Auth, hasRole(ROLES.ADMIN, ROLES.SUPER_ADMIN)], uploadS3.array("image", 5), controller.product.create)
 
 router.get("/:productId", [Auth], controller.product.get)
 

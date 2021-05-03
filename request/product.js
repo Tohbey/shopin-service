@@ -6,7 +6,10 @@ function validateProduct(body){
         brand: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required(),
         name:Joi.string().max(100).required(),
         description:Joi.string().max(100).required(),
-        sizes: Joi.string().max(100).required(),
+        sizes: Joi.array()
+            .items(
+                Joi.string().required()
+            ),
         status: Joi.string().valid("available", "out-of-sales").required(),
         quantity: Joi.number().min(0).required(),
         condition: Joi.string().valid("new", "good", "fair").required(),
