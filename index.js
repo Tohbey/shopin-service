@@ -15,7 +15,10 @@ require('./startup/prod')(app);
 app.get("",async(req, res) => {
     res.send({
         title:"Welcome to Shopin-api",
-        developer:"Fafowora Oluwatobiloba"
+        developer:"Fafowora Oluwatobiloba Kayode",
+        github: "https://github.com/Tohbey",
+        twitter: "",
+        documentationURL: ""
     })
 })
 

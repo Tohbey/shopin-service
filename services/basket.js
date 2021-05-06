@@ -1,4 +1,5 @@
 const { MSG_TYPES } = require('../constant/types');
+const { deleteMany } = require('../models/basket');
 const Basket = require("../models/basket")
 
 class BasketService{
@@ -26,7 +27,7 @@ class BasketService{
             try {
                 const basket = await Basket.find({
                     user: userId
-                })
+                }).populate("Product")
                 if(!basket){
                     return reject({statusCode: 404, msg: MSG_TYPES.NOT_FOUND})
                 }
@@ -65,10 +66,40 @@ class BasketService{
         })
     }
 
-    static update(bodyObject, basketId, userId){
+    static update(basketObject, basketId, userId){
         return new Promise(async (resolve, reject) => {
             try {
+                const basket = await Basket.findOne({
+                    _id: basketId,
+                    user: userId
+                })
+                if(!basket) return reject({statusCode:404, msg:MSG_TYPES.NOT_FOUND})
+
+                await basket.updateOne(
+                    {
+                        $set: basketObject
+                    }
+                )
+            } catch (error) {
+                reject({statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})   
+            }
+        })
+    }
+
+    static clearBasket(userId){
+        return new Promise(async (resolve, reject) => {
+            try {
+                const baskets = await Basket.findOne({
+                    user: userId
+                })
+                if(!baskets) return reject({statusCode:404, msg:MSG_TYPES.NOT_FOUND})
                 
+                let i = 0;
+                while(i<baskets.length){
+                    let basketId = baskets[i]._id
+                    await this.removeBasket(userId, basketId)
+                }
+                resolve(baskets)
             } catch (error) {
                 reject({statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})   
             }

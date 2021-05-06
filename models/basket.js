@@ -18,6 +18,10 @@ const basketSchema = new mongoose.Schema(
       required: true,
       min: 0
     },
+    color:{
+      type: String,
+      required: true
+    },
     amount:{
       type: Number,
       required: true,
