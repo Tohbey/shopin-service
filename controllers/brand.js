@@ -11,6 +11,8 @@ exports.createBrand = async(req, res, next) => {
         const { error } = validateBrand(req.body)
         if(error) return JsonResponse(ress, 400, error.details[0].message)
 
+        req.body.img = req.file.location
+
         let createBrand = await BrandService.create(req.body)
 
         JsonResponse(res, 201, MSG_TYPES.CREATED, createBrand)

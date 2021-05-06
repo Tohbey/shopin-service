@@ -64,7 +64,11 @@ class ProductService{
                 })
                 if(!product) return reject({statusCode:404, msg:MSG_TYPES.NOT_FOUND})
 
-                await product.delete()
+                product.deleted = true;
+                product.deletedAt = new Date.now();
+                product.deletedBy = userId;
+                
+                product.save();
                 resolve(product)
             } catch (error) {
                 reject({statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})

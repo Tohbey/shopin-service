@@ -20,7 +20,7 @@ exports.create = async(req, res, next) => {
         const brand = await BrandService.getBrand(filter)
         req.body.brand  = brand._id.toString();
 
-        const assets = await ProductService.getAssets(req.files)
+        const assets = ProductService.getAssets(req.files)
         req.body.assets = assets
         
         const { error } = validateProduct(req.body)
@@ -60,7 +60,8 @@ exports.getProducts = async(req, res, next) => {
     try {
         const { page, pageSize, skip } = paginate(req);
         const filter = {
-            brand: req.query.brands
+            brand: req.query.brands,
+            deleted: req.query.deleted
         };
 
         const {products, total} = await ProductService.getProducts(skip ,pageSize, filter)
@@ -86,7 +87,8 @@ exports.getProductsByAdmin = async(req, res, next) => {
         const { page, pageSize, skip } = paginate(req);
         const filter = {
             admin: req.user_.id,
-            brand: req.query.brands
+            brand: req.query.brands,
+            deleted: req.query.deleted
         };
 
         const {products, total} = await ProductService.getProducts(skip ,pageSize, filter)

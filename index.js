@@ -1,9 +1,12 @@
 require("winston-mongodb");
 const morgan = require("morgan");
 const express = require("express")
+const cors = require('cors')
+const winston = require("winston");
+
 const app = express()
 app.use(morgan('tiny'))
-const winston = require("winston");
+app.use(cors())
 
 require("./startup/routes")(app);
 require("./startup/db")()
