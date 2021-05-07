@@ -77,6 +77,11 @@ const productSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    rating:{
+      type: Number,
+      min:0,
+      default: 0
+    },
     deletedBy: {
       type: objectId,
       ref: "User",

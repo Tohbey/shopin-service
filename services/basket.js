@@ -96,8 +96,9 @@ class BasketService{
                 
                 let i = 0;
                 while(i<baskets.length){
-                    let basketId = baskets[i]._id
-                    await this.removeBasket(userId, basketId)
+                    let basketId = baskets[i]._id;
+                    await this.removeBasket(userId, basketId);
+                    i++;
                 }
                 resolve(baskets)
             } catch (error) {
