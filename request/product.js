@@ -5,7 +5,7 @@ function validateProduct(body){
         admin: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required(),
         brand: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required(),
         name:Joi.string().max(100).required(),
-        description:Joi.string().max(100).required(),
+        description:Joi.string().max(300).required(),
         sizes: Joi.array()
             .items(
                 Joi.string().required()

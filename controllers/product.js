@@ -59,10 +59,7 @@ exports.get = async(req, res, next) => {
 exports.getProducts = async(req, res, next) => {
     try {
         const { page, pageSize, skip } = paginate(req);
-        const filter = {
-            brand: req.query.brands,
-            deleted: req.query.deleted
-        };
+        const filter = req.body
 
         const {products, total} = await ProductService.getProducts(skip ,pageSize, filter)
        
@@ -86,10 +83,8 @@ exports.getProductsByAdmin = async(req, res, next) => {
     try {
         const { page, pageSize, skip } = paginate(req);
         const filter = {
-            admin: req.user_.id,
-            brand: req.query.brands,
-            deleted: req.query.deleted
-        };
+            admin: req.user._id
+        }
 
         const {products, total} = await ProductService.getProducts(skip ,pageSize, filter)
        
@@ -111,7 +106,7 @@ exports.getProductsByAdmin = async(req, res, next) => {
 */
 exports.delete = async(req, res, next) => {
     try {
-        const adminId = req.user_.id;
+        const adminId = req.user._id;
         const productId = req.params.productId;
         
         await ProductService.deleteProduct(productId, adminId)

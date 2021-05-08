@@ -7,9 +7,9 @@ router.post("/", [Auth, hasRole(ROLES.ADMIN, ROLES.SUPER_ADMIN)], uploadS3.array
 
 router.get("/:productId", [Auth], controller.product.get)
 
-router.get("", [Auth],controller.product.getProducts)
-
-router.get("/byAdmin", [Auth, hasRole(ROLES.ADMIN, ROLES.SUPER_ADMIN)],controller.product.getProductsByAdmin)
+router.get("", [Auth, hasRole(ROLES.ADMIN, ROLES.SUPER_ADMIN, ROLES.USER)],controller.product.getProducts)
+//not working
+router.get("/admin", [Auth, hasRole(ROLES.ADMIN, ROLES.SUPER_ADMIN)], controller.product.getProductsByAdmin)
 
 router.delete(":/productId", [Auth, hasRole(ROLES.ADMIN, ROLES.SUPER_ADMIN)], controller.product.delete)
 

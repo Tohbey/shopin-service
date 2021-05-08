@@ -42,7 +42,7 @@ const productSchema = new mongoose.Schema(
     description:{
       type: String,
       required: true,
-      maxlength: 200
+      maxlength: 300
     },
     sizes: [{
       type: String,
