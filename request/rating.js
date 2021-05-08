@@ -4,7 +4,7 @@ function validateRating(body){
     const ratingSchema = Joi.object({
         user: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required(),
         product: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required(),
-        rating: Joi.string().required()
+        rating: Joi.number().required().max(10).min(0)
     })
 
     return ratingSchema.validate(body)
@@ -14,7 +14,7 @@ function validateComment(body){
     const ratingSchema = Joi.object({
         user: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required(),
         product: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required(),
-        Comment: Joi.string().required()
+        comment: Joi.string().required()
     })
 
     return ratingSchema.validate(body)

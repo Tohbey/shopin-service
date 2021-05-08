@@ -4,7 +4,7 @@ const Product = require("../models/product");
 
 class RatingService{
     
-    static create(body){
+    static createRating(body){
         return new Promise(async (resolve, reject) => {
             try {
                 const rating = await Rating.findOne({
@@ -29,6 +29,27 @@ class RatingService{
         }) 
     }
 
+    static createComment(body){
+        return new Promise(async (resolve, reject) => {
+            try {
+                const comment = await Rating.findOne({
+                   user: body.user,
+                   product: body.product,
+                   comment: body.comment,
+                })
+                if(comment){
+                    return reject({statusCode:404, msg:MSG_TYPES.RATING_EXIST})
+                }
+                
+                const createRating = await Rating.create(body)
+
+                resolve(createRating)
+            } catch (error) {
+                reject({statusCode:500, msg:MSG_TYPES.SERVER_ERROR, error})              
+            }
+        }) 
+    }
+
     static get(ratingId){
         return new Promise(async (resolve, reject) => {
             try {
@@ -47,7 +68,7 @@ class RatingService{
             try {
                 const ratings = await Rating.find({
                     product: productId
-                }).populate("User")
+                }).populate("user")
 
                 const total = await Rating.find({
                     product: productId
@@ -64,7 +85,8 @@ class RatingService{
         return new Promise(async (resolve, reject) => {
             try {
                 const ratings = await Rating.find({
-                    product: productId
+                    product: productId,
+                    comment: null
                 })
                 const total = await Rating.find({
                     product: productId
@@ -100,6 +122,8 @@ class RatingService{
                 if (!rating){
                     return reject({statusCode:404, msg:MSG_TYPES.NOT_FOUND})
                 }
+                
+                await this.accumulateRating(rating.product)
 
                 rating.delete();
 
