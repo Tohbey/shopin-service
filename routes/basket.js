@@ -2,7 +2,7 @@ const router = require("express").Router();
 const controller = require("../controllers");
 const {Auth, hasRole, ROLES} = require('../middlewares/auth')
 
-router.post("/", [Auth, hasRole(ROLES.USER)], controller.basket.createBasket0)
+router.post("/", [Auth, hasRole(ROLES.USER)], controller.basket.createBasket)
 
 router.get("/", [Auth, hasRole(ROLES.USER)], controller.basket.getBasket)
 
