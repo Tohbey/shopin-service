@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const objectId = mongoose.Types.ObjectId
 
-const ratingSchema = new mongoose.Schema({
+const ratingSchema = new mongoose.Schema(
+  {
     user:{
         type: objectId,
         ref:"User",
@@ -21,8 +22,12 @@ const ratingSchema = new mongoose.Schema({
     comment:{
         type: String,
     }
-})
+  },
+  {
+    timestamps: true,
+  }
+);
 
-const Rating = mongoose.model("Rating", ratingSchema)
+const Rating = mongoose.model("Rating", ratingSchema);
 
-module.exports = Rating
+module.exports = Rating;

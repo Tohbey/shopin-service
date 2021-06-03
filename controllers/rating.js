@@ -9,7 +9,6 @@ exports.createRating = async(req, res, next) => {
         req.body.user = req.user._id;
         req.body.product = req.params.productId;
 
-        console.log(req.body)
         const { error } = validateRating(req.body)
         if(error) JsonResponse(res, 400, error.details[0].message)
 
@@ -55,7 +54,7 @@ exports.get = async(req, res, next) => {
 exports.getProductRating = async(req, res, next) => {
     try {
         const id = req.params.productId;
-        console.log(id)
+
         const { ratings, total } = await RatingService.getProductRatings(id)
 
         JsonResponse(res, 200, MSG_TYPES.RATING_RETRIEVED, ratings, total)
