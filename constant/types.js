@@ -5,6 +5,7 @@ const MSG_TYPES = Object.freeze({
     UPDATED: "Resource Updated Successfully",
     CREATED: "Resource Created Successfully",
     FETCHED: "Resource Fetched Successfully",
+    EXIST: "Resource Exist Successfully",
     ACCOUNT_VERIFIED: "Account Successfully Verified",
     ORDER_POSTED: "Order Successfully Posted",
     ACCOUNT_EXIST: "Account already exist.",
