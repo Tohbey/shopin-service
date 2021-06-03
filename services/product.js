@@ -41,7 +41,6 @@ class ProductService{
     static getProducts(skip, pageSize, filter){
         return new Promise(async (resolve, reject) => {
             try {
-                console.log(filter)
                 const products = await Product.find(filter)
                 .skip(skip).limit(pageSize)
 
